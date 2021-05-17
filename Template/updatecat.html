@@ -1,0 +1,23 @@
+{% extends "dashboard.html" %}
+{% block content %}
+              
+               
+
+<div class=option style="left: 40%;width:20%;top: 100px;"><form  method=post action="/category.html">
+    <div class="imgcontainer"><h3>Update Category</h3>
+    </div>
+    <div class="container">
+      <label for="catget"><b>Category</b></label>
+  
+      <input type="text" name="id" id="id" style="display:none;" value= {{ rowsget.id}}>
+      <input type="text"  name="catget" id="catget" value= {{ rowsget.name}} ><br>
+ 
+      <button type="submit" class="cancelbtn" style="left: 78%;">Ok</button>
+
+  </div>
+  </form>
+  </div>
+
+  
+    
+  {% endblock %} 

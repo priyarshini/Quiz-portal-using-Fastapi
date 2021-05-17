@@ -1,0 +1,38 @@
+<html>
+    <title>
+        Quiz Score card
+      </title>
+      <head>
+          <link rel="stylesheet" href=" {{url_for('static',path='/quizs.css')}}">
+          <link rel="stylesheet" href="{{url_for('static',path='/login.css')}}">
+      </head>
+      
+      <body><center>
+                    <div class="Historybox custom"> <h3>  Your Scores </h3>
+                        <table id="customers">{% for userscore in rows %}
+            
+                <tr><th>Category</th><td>{{ userscore.category }}</td></tr>
+                <tr><th>Level</th><td>{{ userscore.level}}</td></tr>
+                <tr><th>Score</th><td>{{ userscore.score}}</td></tr>
+                <tr><th>Completed Time</th><td>{{ userscore.duration }} secs</td></tr>
+                {% endfor %}
+            </table><br>
+                        <button  id="homeBtn">Home</button>
+                        <button  id="exitBtn">LogOut</button></center>
+                     </div>
+        <script>
+              const homeBtn=document.getElementById("homeBtn");
+             const exitBtn=document.getElementById("exitBtn");
+             
+             //Brings the category selection page after clicked home button clicked
+            homeBtn.addEventListener('click',function(){
+    window.location='http://127.0.0.1:8000/login';
+})
+
+//Brings to login page after exit button clicked
+    exitBtn.addEventListener('click',function(){
+    window.location='http://127.0.0.1:8000'
+})
+</script>             
+</body>
+</html>

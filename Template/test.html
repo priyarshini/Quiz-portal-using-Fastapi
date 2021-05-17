@@ -1,0 +1,32 @@
+<html>
+    <title>
+      Quizess
+    </title>
+    <head>
+        <link rel="stylesheet" href=" {{url_for('static',path='/quizs.css')}}">
+        <link rel="stylesheet" href="{{url_for('static',path='/login.css')}}">
+    </head>
+    
+    <body>
+        <div class="homebox custom">   
+            <h3 style="text-align: center;text-transform: capitalize;"> {{ playername.name }} set up your Quiz !</h3>
+            <form id=form name=form method=post ACTION="/set">
+            <label for=category>Category</label>
+            <select name="category" id="category">
+                {% for category in rows %} <option value={{ category.name }}  class="dropbtn">
+                    {{ category.name}}
+                </option>
+                {% endfor %}
+            </select>
+            <label for="difficulty">Difficulty </label> 
+            <select name="difficulty" id="difficulty" style="margin-left: 23px;width: 51%;">
+                <option value="Easy">Easy</option>
+                <option value="Medium">Medium</option>
+                <option value="Hard">Hard</option>
+            </select>
+            <button id='start' class="submit" type="submit" style="position: relative;left: 58%;border-radius: 20px;" >Start</button>   
+        </form>     
+        </div>
+            
+    </body>
+</html>

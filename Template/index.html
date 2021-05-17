@@ -1,0 +1,33 @@
+<html>
+    <title>
+      Quizess
+    </title>
+    <head>
+        <link rel="stylesheet" href=" {{url_for('static',path='/quizs.css')}}">
+        <link rel="stylesheet" href="{{url_for('static',path='/login.css')}}">
+    </head>
+    
+    <body>
+        <div id="mySidenav" class="sidenav">  <a href="adminpage.html" id="about">Admin Login</a></div>
+        <div class="container">
+           <h3 align="center">{{ text }}</h3>
+           <form id=form name=form method=post ACTION="/login">
+                <label for="username">Name </label>
+                <input type="text" class="textin" placeholder="Enter your name" id="username" name="username" required>
+                <button type="submit" name="goButton" id="goButton" style="border-radius: 20px;left: 64%;position: relative;">LogIn</button></form>
+        </div>
+
+    <script>
+    
+    let userName=document.getElementById("username").value;
+    var goBtn=document.getElementById("goButton");
+    
+//validate whether user name entered
+goBtn.addEventListener('click',function()
+{  
+    if(userName='')
+         alert('Enter your the name!');})
+
+    </script>    
+    </body>
+</html>        

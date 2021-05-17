@@ -1,0 +1,311 @@
+<html>
+    <title>
+        Quize 
+      </title>
+      <head>
+          <link rel="stylesheet" href=" {{url_for('static',path='/quizs.css')}}">
+          <link rel="stylesheet" href="{{url_for('static',path='/login.css')}}">
+      </head>
+      
+      <body>
+            <div class="infobox hide">
+                <textarea id="catinfo">{{ catinfo }}</textarea>
+                <textarea id="diffinfo">{{ diffinfo }}</textarea>
+            </div>
+            <div class="quizbox custom ">
+                <header>
+                <div class="title">Question Category </div>
+                <div class="timer"><div class="timertext">Time Left</div>
+                <div class="timersec" id="timersec">15</div>
+                <div class="timeline"></div> </header><br>
+                <div class="questionText" id="questionText"> HERE GOES QUESTION</div>
+                <div class="optioncontainer ">OPTIONS DISPLAY</div>
+                <div class="next-question-btn"><span class="questionNumber"></span>
+               <button type="submit" style="width: 84px; height: 46px;position: relative;left: 80%;" id="nextBtn">Next</button>
+                </div></div>
+            
+            <div class="resultbox custom hide" style="padding: 50px 30px;top: 10%; height: 200px;">
+                    <center>   <form method=post action="/score">
+                     
+                        <input type=text style="display: none;"  id="name" name="name" value= {{ playern.name }}></h3><br>
+                        <input type=text style="display: none;" id="points" name="points">
+                        <input type=text  style="display: none;" id="mins" name="mins">
+                        <input type=text style="display: none;"  id="sec" name="sec">
+                        <input type=text style="display: none;" id="levels" name="levels">
+                        <input type=text style="display: none;"  name="cat" id="cat">
+                    
+               
+                          <h3>Congrats <b class="name"> {{ playern.name }} </b></h3>
+                        <h4> You have scored <b class="points" > </b> out of 
+                            <b class="totalpoints"> </b> questions in <b class="mins"></b> : <b class="sec"> </b> minutes </h4>
+                                   
+                        <button type="submit" id="historyBtn"  style="position: relative;left: -10%;">Scores</button> </form>
+    
+                        <button  id="exitBtn" style="position: relative;left: 9%;top: -76px">LogOut</button>
+                    </center>  </div>
+
+                    </body>
+                    </html>
+
+
+
+<script>
+   const timeline = document.querySelector(".timeline");
+   const timeText = document.querySelector(".timertext");
+   const timeCount = document.querySelector(".timersec");
+   const title=document.querySelector(".title");
+   const  questionNumber=document.querySelector(".questionNumber");
+   const  questionText=document.querySelector(".questionText");
+   const  optioncontainer=document.querySelector(".optioncontainer");
+   const quizbox=document.querySelector(".quizbox");
+   const historybox=document.querySelector(".Historybox");
+   const resultbox=document.querySelector(".resultbox");
+   var nextBtn=document.getElementById("nextBtn");
+   const catinfo=document.getElementById("catinfo");
+   const diffinfo=document.getElementById("diffinfo");
+   const exitBtn=document.getElementById("exitBtn");
+   const historyBtn=document.getElementById("historyBtn");
+   const name=document.getElementById("name").value;
+
+let questions=[];
+let questioncounter;
+let currentQuestion={};
+let availableQuestion=[];
+let availableOption=[];
+let score;
+var nextcount=1;
+var getresult=false;
+var quizTime;
+var minutes ;
+var seconds;
+let data;
+let timeValue =  15;
+let widthValue = 0;
+let counter;
+let counterLine;
+let categoryName=catinfo.value;
+let difficultyValue=diffinfo.value;
+
+ fetch("http://127.0.0.1:8000/set/"+categoryName+"&"+difficultyValue+"/")   
+ .then(response => {
+        return response.json();
+    })
+    .catch((error)=>{
+        alert("error");
+    }
+)
+    .then((loadedQuestions) => {
+        questions = loadedQuestions.map((loadedQuestion) => {
+            const formattedQuestion = {question: loadedQuestion.question};
+            const answerOptions = [loadedQuestion.incorrect_answer1,loadedQuestion.incorrect_answer2,loadedQuestion.incorrect_answer3];
+            formattedQuestion.answer = Math.floor(Math.random() * 4) + 1;
+            answerOptions.splice(formattedQuestion.answer - 1,0,loadedQuestion.correct_answer );
+            answerOptions.forEach((option, index) => {formattedQuestion['option' + (index + 1)] = option;});
+             return formattedQuestion;
+        });
+
+        setOver();
+        startTimer(15); //calling startTimer function
+        startTimerLine(0); //calling startTimerLine function
+        setAvailableQuestions();
+        getQuestion();
+        startTime=setInterval(function(){ seconds++;
+            if(seconds>59)
+            { minutes++;
+            seconds=0;}
+        },1000);   
+        
+});
+//pushing the question into an array availableQuestion
+function setAvailableQuestions()
+{
+    availableQuestion=[...questions];
+}
+
+//Setting questions and options to display
+function getQuestion() 
+{
+     //set question number to display
+    title.innerHTML="Quiz on "+ categoryName;
+    questionNumber.innerHTML= "<b>"+(questioncounter + 1) +"</b>  / "+"<b>"+questions.length +"</b>";
+    
+    //To get random questions
+    const questionIndex= availableQuestion[Math.floor(Math.random()*availableQuestion.length)];
+    currentQuestion=questionIndex;
+    questionText.innerHTML= currentQuestion.question;
+
+    // get position of question in availableQuestion array 
+    const index1=availableQuestion.indexOf(questionIndex);
+
+    //To avoid repeated questions to be disaplayed
+    availableQuestion.splice(index1,1);
+
+    //Pushing the option into array
+    
+    for (let i=1;i<=4;i++)
+    {
+        availableOption.push(i);
+    }
+       optioncontainer.innerHTML='';
+
+    //create options to be dispayed in HTML
+    for (let i=1;i<=4;i++)
+    {
+        const optionIndex= availableOption[Math.floor(Math.random()*availableOption.length)];
+        const index2= availableOption.indexOf(optionIndex);
+        availableOption.splice(index2,1);
+
+        const options=document.createElement("div")
+        options.innerHTML=currentQuestion['option'+optionIndex];
+        options.id=optionIndex;
+        options.className="option";
+        optioncontainer.appendChild(options);
+        options.setAttribute("onclick","getResult(this)");
+    }
+   
+    questioncounter++; //increase the question count
+    getresult=false;
+}
+
+//calculate the results of quiz
+function getResult(element){
+    clearInterval(counter); //clear counter
+    clearInterval(counterLine); 
+    const id=parseInt(element.id);
+    //getting ans by comparing id of clicked option
+    if(id === currentQuestion.answer){
+        element.classList.add("correct");
+        score++; }
+    else{
+        element.classList.add("incorrect");
+    //displaying correct answer
+    const optionLen=optioncontainer.children.length;
+    for(let i=0;i<optionLen;i++)
+    { if(parseInt(optioncontainer.children[i].id)=== currentQuestion.answer){
+        optioncontainer.children[i].classList.add("correct");}}}
+    unclickableOption();
+    getresult=true;
+}
+
+//To make other options unclickable once user cliked a option
+function unclickableOption(){
+    const optionLen=optioncontainer.children.length;
+    for( let i=0;i<optionLen;i++){
+        optioncontainer.children[i].classList.add("already-answered");}}
+      
+//To get into next question
+nextBtn.addEventListener('click',function(){
+   if(getresult==false){
+       alert('choose any option !');
+   }
+   if(getresult==true){
+     if(questioncounter==questions.length){
+        clearInterval(counter); //clear counter
+        clearInterval(counterLine);
+        clearInterval(startTime);
+        quizOver();}
+    else{
+        nextcount++;
+        clearInterval(counter); //clear counter
+        clearInterval(counterLine); //clear counterLine
+        startTimer(timeValue); //calling startTimer function
+        startTimerLine(widthValue); //calling startTimerLine function
+        getQuestion();}
+}})
+
+//when all the questions were answered this function is called
+function quizOver(){
+    
+    quizbox.classList.add("hide");
+    resultbox.classList.remove("hide");
+    showresult();
+}
+let spendTime;
+//To display the score of the quiz
+function showresult(){
+   
+      minutes = minutes < 10 ? "0" + minutes : minutes;
+      seconds = seconds < 10 ? "0" + seconds : seconds;
+
+   document.getElementById("points").value= score;
+   document.getElementById("mins").value= minutes; 
+   document.getElementById("sec").value=seconds;
+   document.getElementById("levels").value=difficultyValue;
+   document.getElementById("cat").value=categoryName;
+   
+   document.querySelector(".points").innerHTML= score;
+   document.querySelector(".totalpoints").innerHTML= questions.length ;
+   document.querySelector(".mins").innerHTML= minutes; 
+   document.querySelector(".sec").innerHTML=seconds;
+   }
+
+//To makeover the quiz freshly
+function setOver(){
+     seconds=0
+     minutes=0
+     startTime=0
+     questioncounter=0;
+     score=0;
+     nextcount=1;    
+     timeValue =  15;
+     widthValue = 0;
+     clearInterval(counter);
+     clearInterval(counterLine);
+}
+
+
+//Brings to login page after exit button clicked
+exitBtn.addEventListener('click',function(){
+    setOver();
+    window.location='http://127.0.0.1:8000'
+})
+
+
+historyBtn.addEventListener('click',function(){
+    setOver();
+    window.location="http://127.0.0.1:8000/score/"+score+"&"+difficultyValue+"&"+seconds+"&"+categoryName+"&"+name+"/";
+})
+var count;
+
+function startTimer(count){
+    counter = setInterval(timer, 1000);
+    function timer(){
+        document.getElementById('timersec').innerHTML=count;
+        count--;
+        if(count === 0){ //if timer is less than 0
+            clearInterval(counter); //clear counter
+        }
+        if (count === 0){
+            alert("You're out of time!");
+            if(questioncounter==questions.length){
+                clearInterval(counter); //clear counter
+                clearInterval(counterLine);
+                quizOver();}
+              
+            else{
+                nextcount++;
+                clearInterval(counter); //clear counter
+                clearInterval(counterLine); //clear counterLine
+                startTimer(timeValue); //calling startTimer function
+                startTimerLine(widthValue); //calling startTimerLine function
+                getQuestion();
+            }
+        }
+            
+    }
+}
+
+function startTimerLine(count)
+{
+    counterLine = setInterval(timer, 20);
+    function timer()
+       {
+        count += 1; //upgrading time value with 1
+        timeline.style.width = (count) + "px"; //increasing width of time_line with px by time value
+        if(count > 695){ 
+            clearInterval(counterLine); //clear counterLine
+        }
+    }
+}
+        
+</script>

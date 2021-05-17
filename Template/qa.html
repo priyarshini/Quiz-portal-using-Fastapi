@@ -1,0 +1,75 @@
+
+{% extends "dashboard.html" %}
+{% block content %}
+<div id=" qabox" class="qabox ">
+        <button onclick="document.getElementById('qaadd').style.display='block'" style="width:auto;" class="btn default">Add</button>
+        <div id="qaadd" class="modal"><form class="modal-content animate" method=post action="/addques">
+        <div class="imgcontainer"> <h3>Add Q&A</h3> <span onclick="document.getElementById('qaadd').style.display='none'" class="close" title="Close Modal">&times;</span>
+        </div>
+        <div class="container">
+          <label for="questio"><b>Question</b></label>
+          <input type="text" placeholder="Enter question" name="questio" id="questio"required>
+          <label for="inop1"><b>Incorrect Option 1</b></label>
+          <input type="text" placeholder="Enter option 1" name="inop1" id="inop1"required>
+          <label for="inop2"><b>Incorrect Option 2</b></label>
+          <input type="text" placeholder="Enter option 2" name="inop2" id="inop2"required>
+          <label for="inop3"><b>Incorrect Option 3</b></label>
+          <input type="text" placeholder="Enter option 3" name="inop3" id="inop3"required>
+          <label for="inop4"><b>Correct Option</b></label>
+          <input type="text" placeholder="Enter option 4" name="inop4" id="inop4"required>
+          <label for="catn"><b>Category</b></label>
+          <input type="text" placeholder="Enter Category" name="cname" id="cname"required>
+          <label for="lev"><b>Level</b></label>
+          <input type="text" placeholder="Enter level" name="lev" id="lev"required>
+          <button type="submit" class="cancelbtn" style="left: 60%;">Ok</button>
+          <button type="button" onclick="document.getElementById('qaadd').style.display='none'" style="left: 63%;padding: 14px ;" class="cancelbtn">Cancel</button>
+       
+        </div></form></div>
+        
+      <h3 style="color: white;">Available Questions</h3>
+       <table id="customers">
+          <tr>
+            <th>Q.ID</th>
+            <th>Questions</th>
+            <th>Options</th>
+            <th>Category</th>
+            <th>Level</th>
+            <th colspan="2">Action</th>
+          </tr>
+          {% for qa in rows2 %}
+          <tr>
+            <td>{{ qa.id }}</td>
+            <td>{{ qa.question }}</td>
+            <td>{{ qa.incorrect_answer1  }}, {{ qa.incorrect_answer2  }},{{ qa.incorrect_answer3  }},{{ qa.correct_answer  }}</td>
+            <td>{{ qa.category  }}</td>
+            <td>{{ qa.level }}</td>
+            <td><a  href="/updateqa.html/{{ qa.id }}">Update</a></td>
+            <td><a  href="/deleteqa.html/{{ qa.id }}">Delete</a></td></tr>
+
+          </tr>
+          {% endfor %}
+        </table>
+      <h3 style="color: white;">Deleted Questions </h3>
+        <table id="customers">
+            <tr>
+              <th>Q.ID</th>
+              <th>Questions</th>
+              <th>Options</th>
+              <th>Category</th>
+              <th>Level</th>
+              <th colspan="2">Action</th>
+            </tr>
+            {% for qa in rows3 %}
+            <tr>
+              <td>{{ qa.id  }}</td>
+              <td>{{ qa.question  }}</td>
+              <td>{{ qa.incorrect_answer1  }}, {{ qa.incorrect_answer2  }},{{ qa.incorrect_answer3  }},{{ qa.correct_answer  }} </td>
+              <td>{{ qa.category  }}</td>
+              <td>{{ qa.level  }}</td>
+              <td><a  href="/updateqa.html/{{ qa.id }}">Undelete</a></td>
+              <td><a  href="/deleteqa/{{ qa.id }}">Drop</td></tr>
+            </tr>
+            {% endfor %}
+          </table>
+
+          {% endblock %}        

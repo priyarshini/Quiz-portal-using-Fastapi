@@ -1,0 +1,40 @@
+<html>
+    <title>
+      Admin page
+    </title>
+    <head>
+        <link rel="stylesheet" href=" {{url_for('static',path='/quizs.css')}}">
+        <link rel="stylesheet" href="{{url_for('static',path='/login.css')}}">
+    </head>
+    
+    <body><div id="mySidenav" class="sidenav"><a href="http://127.0.0.1:8000/" id="about">User login</a></div>
+        <div class="container">
+            
+        
+           <h3 align="center">{{ text }}</h3>
+           <form id=form name=form method=post ACTION="/dashboard">
+                <label for="adminName">Name </label>
+                <input type="text" class="textin" placeholder="Enter name" id="adminName" name="adminName">
+                <label for="password">Password </label>
+                <input type="password" placeholder="Enter password" id="password" name="password">
+                <button type="submit" name="goButton" id="goButton" onSubmit="return check();" style="border-radius: 20px;left: 64%;position: relative;">LogIn</button></form>
+        </div>
+
+    <script>
+    
+    let adminName=document.getElementById("adminName").value;
+    let pass=document.getElementById("password").value;
+    var goBtn=document.getElementById("goButton");
+    
+//validate whether user name entered
+function check()
+{  
+    if(adminName=="" && pass=="" ){
+         alert('Enter your the name!');
+         return false}
+         else 
+         return true;}
+
+    </script>    
+    </body>
+</html>        

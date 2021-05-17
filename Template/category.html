@@ -1,0 +1,58 @@
+{% extends "dashboard.html" %}
+{% block content %}
+
+<div id="catbox" class="catbox">
+        <button onclick="document.getElementById('catadd').style.display='block'" class="btn default">Add</button>
+      <div id="catadd" class="modal"><form class="modal-content animate" method=post action="/addcat">
+        <div class="imgcontainer"><h3>Add Category</h3><span onclick="document.getElementById('catadd').style.display='none'" class="close" title="Close Modal">&times;</span>
+        </div>
+        <div class="container">
+          <label for="catname"><b>New Category</b></label>
+          <input type="text" placeholder="Enter Category" name="catname" id="catname"required>
+          
+          <button type="submit" class="cancelbtn" style="left: 60%;">Ok</button>
+          <button type="button" onclick="document.getElementById('catadd').style.display='none'" style="left: 63%;" class="cancelbtn">Cancel</button>
+       
+        </div>
+      </form></div><br>
+
+     <h3 style="color: white;"> Available Category </h3>
+     
+      <table id="customers" align="center">
+          <tr><th>S.No</th><th>Category</th><th colspan="2">Action</th></tr>
+          {% for category in rows %}
+          <tr><td id=>{{ category.id }}</td><td >{{ category.name }}</td>
+            <td><a  href="/updatecat.html/{{ category.id }}">Update</a></td>
+            <td><a  href="/deletecat.html/{{ category.id }}">Delete</a></td></tr>
+          {% endfor %}
+      </table></center>
+      <h3 style="color: white;">  Deleted Category </h3>
+        <center>
+      <table id="customers"  align="center">
+          <tr><th>S.No</th><th>Category</th><th colspan="2">Action</th></tr>
+          {% for category in rows1 %}
+          <tr><td>{{ category.id }}</td><td>{{ category.name }}</td>
+            <td><a  href="/updatecat.html/{{ category.id }}">Undelete</a></td>
+            <td><a  href="/deletecat/{{ category.id }}">Drop</td></tr>
+          {% endfor %}
+      </table>
+    </center>
+    </div>
+    <div id="catup" class="modal"><form class="modal-content animate" method=post action="/catup">
+        <div class="imgcontainer"><h3>Update Category</h3><span onclick="document.getElementById('catup').style.display='none'" class="close" title="Close Modal">&times;</span>
+        </div>
+        <div class="container">
+          <label for="catname"><b>Category</b></label>
+          <input type="text"class=idd name="idget" id="idget" style="display:none">
+          <input type="text"  class=cat name="catget" id="catget"required>
+          
+          <button type="submit" class="cancelbtn">Ok</button>
+          <button type="button" onclick="document.getElementById('catup').style.display='none'" class="cancelbtn">Cancel</button>
+       
+        </div>
+      </form></div>
+
+    
+   {% endblock %} 
+ 
+   

@@ -1,0 +1,76 @@
+<html>
+ <title>
+  Dashboard
+</title>
+ <head>
+       <link rel="stylesheet" href=" {{url_for('static',path='/form.css')}}">
+        <link rel="stylesheet" href=" {{url_for('static',path='/dash.css')}}">
+    </head>
+
+</head>
+<body>
+
+<div id="mySidenav" class="sidenav">
+  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+  <a href="http://127.0.0.1:8000/category.html">Category</a>
+  <a href="http://127.0.0.1:8000/qa.html">Q&A</a>
+  <a onclick="document.getElementById('id01').style.display='block'">Change password</a>
+  <a href="/">Log Out</a>
+
+</div>
+
+<div id="main">
+  <span style="font-size:30px;cursor:pointer;color: white;" onclick="openNav()">&#9776; Dashboard</span>
+  <div id="id01" class="modal">
+      <form class="modal-content animate" method="post" action="/changed">
+        <div class="imgcontainer">
+          <h3>Change password</h3>
+          <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
+        </div>
+    
+        <div class="container">
+          <label for="psw"><b>New Password</b></label>
+          <input type="password" placeholder="Enter old password" name="psw" id="psw"required>
+    
+          <label for="psw1"><b>Confirm Password</b></label>
+          <input type="password" placeholder="Enter new password" name="psw1" id="psw1" required>
+          
+          <button type="submit" class="cancelbtn" style="left: 60%;">Ok</button>
+          <button type="button" onclick="document.getElementById('id01').style.display='none'"  style="left:63%;" class="cancelbtn">Cancel</button>
+       
+        </div>
+      </form>
+    </div>
+  
+  
+     <script>
+    // Get the modal
+    var modal = document.getElementById('id01');
+    
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+    </script>
+ 
+ {% block content %}
+ {% endblock %}
+
+</div>
+<script>;
+
+function openNav() {
+  document.getElementById("mySidenav").style.width = "250px";
+  document.getElementById("main").style.marginLeft = "250px";
+}
+
+function closeNav() {
+  document.getElementById("mySidenav").style.width = "0";
+  document.getElementById("main").style.marginLeft= "0";
+}
+</script>
+
+</body>
+</html> 

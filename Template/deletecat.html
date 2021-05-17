@@ -1,0 +1,21 @@
+{% extends "dashboard.html" %}
+{% block content %}
+              
+               
+<div class="cont" style="width: 300px;">
+<div><form  method=post action="/delete">
+    <div class="imgcontainer"></div><h3 style="text-align: center;padding:0px 0px;"> Category going to be deleted</h3>
+    </div>
+   
+      <label for="catname"><b>Category</b></label>
+  
+      <input type="text" name="id" id="id" style="display:none;" value= {{ rowsget.id}}>
+      <input type="text"  name="catget" id="catget" value= {{ rowsget.name}} >
+ 
+      <button type="submit" class="cancelbtn" style="left: 80%;">Ok</button> </div>
+  </form>
+</div>
+
+  
+    
+  {% endblock %} 
