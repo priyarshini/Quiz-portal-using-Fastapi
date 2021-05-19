@@ -1,11 +1,10 @@
-python==3.7.0
 aiofiles==0.6.0
 aiomysql==0.0.21
 aiosqlite==0.17.0
 asyncio==3.4.3
 click==7.1.2
 databases==0.4.3
-dataclasses==0.6
+dataclasses==0.8
 fastapi==0.65.0
 h11==0.12.0
 Jinja2==3.0.0
