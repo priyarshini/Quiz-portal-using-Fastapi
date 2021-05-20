@@ -39,7 +39,7 @@
                         <h4> You have scored <b class="points" > </b> out of 
                             <b class="totalpoints"> </b> questions in <b class="mins"></b> : <b class="sec"> </b> minutes </h4>
                                    
-                        <button type="submit" id="historyBtn"  style="position: relative;left: -10%;">Scores</button> </form>
+                        <button type="submit" id="historyBtn"  style="position: relative;left: -10%;">Save</button> </form>
     
                         <button  id="exitBtn" style="position: relative;left: 9%;top: -76px">LogOut</button>
                     </center>  </div>
@@ -64,7 +64,6 @@
    const catinfo=document.getElementById("catinfo");
    const diffinfo=document.getElementById("diffinfo");
    const exitBtn=document.getElementById("exitBtn");
-   const historyBtn=document.getElementById("historyBtn");
    const name=document.getElementById("name").value;
 
 let questions=[];
@@ -257,14 +256,10 @@ function setOver(){
 //Brings to login page after exit button clicked
 exitBtn.addEventListener('click',function(){
     setOver();
-    window.location='http://127.0.0.1:8000'
+    window.location='/'
 })
 
 
-historyBtn.addEventListener('click',function(){
-    setOver();
-    window.location="http://127.0.0.1:8000/score/"+score+"&"+difficultyValue+"&"+seconds+"&"+categoryName+"&"+name+"/";
-})
 var count;
 
 function startTimer(count){
