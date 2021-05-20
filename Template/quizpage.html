@@ -86,7 +86,7 @@ let counterLine;
 let categoryName=catinfo.value;
 let difficultyValue=diffinfo.value;
 
- fetch("http://127.0.0.1:8000/set/"+categoryName+"&"+difficultyValue+"/")   
+ fetch("/set/"+categoryName+"&"+difficultyValue+"/")   
  .then(response => {
         return response.json();
     })
