@@ -325,14 +325,6 @@ async def scoreout(request:Request,points:int=Form(...),sec:int=Form(...),levels
    rows=await database.fetch_all(query1)
    return template.TemplateResponse("scorecard.html",{"request":request,"rows":rows})
 
-@app.get("/score",response_class=HTMLResponse)
-async def scoret(request:Request):
-   query1=Userscore.select()
-   rows=await database.fetch_all(query1)
-   return template.TemplateResponse("scorecard.html",{"request":request,"rows":rows})      
-
-      
-
 
    
 
