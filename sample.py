@@ -59,8 +59,8 @@ Userscore = sqlalchemy.Table(
     sqlalchemy.Column("name"),
     sqlalchemy.Column("level"),
     sqlalchemy.Column("category"),
-    sqlalchemy.Column("duration"),
     sqlalchemy.Column("score"),
+    sqlalchemy.Column("duration")
 )
 
 category = sqlalchemy.Table(
