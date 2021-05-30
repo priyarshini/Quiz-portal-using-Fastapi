@@ -1,7 +1,6 @@
 from typing import List
 from fastapi import FastAPI,Request,Form
 from fastapi.staticfiles import StaticFiles 
-from fastapi.middleware.cors import CORSMiddleware 
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse,JSONResponse
 from pydantic import BaseModel,Field
@@ -91,17 +90,8 @@ engine = sqlalchemy.create_engine(
 metadata.create_all(engine)
 
 app = FastAPI()
-categoryf:str
-difficultyf:str
+
 app.mount("/static",StaticFiles(directory="static"),name="static")
-
-origins=["http://localhost",
-        "http://localhost:8000",
-        "http://localhost:8080",
-        "http://127.0.0.1:8000/",
-]
-
-app.add_middleware(CORSMiddleware,allow_origins=origins,allow_credentials=True,allow_methods=["*"],allow_headers=["*"],)
 
 @app.on_event("startup")
 async def connect():
