@@ -284,7 +284,7 @@ async def scoreout(request:Request,points:int=Form(...),sec:int=Form(...),levels
    record = await database.execute(query)
    query1=Userscore.select()
    rows=await database.fetch_all(query1)
-   return template.TemplateResponse("scorecard.html",{"request":request,"rows":rows})
+   return template.TemplateResponse("Scorecard.html",{"request":request,"rows":rows})
 
 async def quiz_query():
     query = quests.select().where(quests.c.status == 1)
