@@ -112,11 +112,10 @@ async def start(request:Request):
 
 @app.get("/login",response_class=HTMLResponse)
 async def createget(request:Request):
-    query2 = category.select().where(category.c.status == 1)
-    rows = await database.fetch_all(query2)
+    rows = await category_query()
     query1 = player.select()
     playername = await database.fetch_one(query1)
-    return template.TemplateResponse("test.html",{"request":request,"rows":rows,"playername":playername})
+    return template.TemplateResponse("test.html",{"request":request,"rows":rows[0],"playername":playername})
 
 @app.post("/login",response_class=HTMLResponse)
 async def create(request:Request,username:str=Form(...)):
@@ -124,9 +123,8 @@ async def create(request:Request,username:str=Form(...)):
     record_id = await database.execute(query)
     query1 = player.select().where(player.c.name == username)
     playername = await database.fetch_one(query1)
-    query2 = category.select().where(category.c.status == 1)
-    rows = await database.fetch_all(query2)
-    return template.TemplateResponse("test.html",{"request":request,"rows":rows,"playername":playername})
+    rows = await category_query()
+    return template.TemplateResponse("test.html",{"request":request,"rows":rows[0],"playername":playername})
 
 @app.post("/set",response_class=HTMLResponse)
 async def quest(request:Request,category:str=Form(...),difficulty:str=Form(...)):
@@ -172,74 +170,58 @@ async def changepsw(request:Request,psw:str=Form(...),psw1:str=Form(...)):
 
 @app.post("/addcat",response_class=HTMLResponse)
 async def addcat(request:Request,catname:str=Form(...)):
-        query=category.insert().values(name=catname,status=1)
-        row=await database.execute(query)
-        query = category.select().where(category.c.status == 1)
-        rows = await database.fetch_all(query)
-        query1 = category.select().where(category.c.status == 0)
-        rows1 = await database.fetch_all(query1)
-        return template.TemplateResponse("category.html",{"request":request,"rows":rows,"rows1":rows1})
+    query=category.insert().values(name=catname,status=1)
+    row=await database.execute(query)
+    rows,rows1 = await category_query()
+    return template.TemplateResponse("category.html",{"request":request,"rows":rows,"rows1":rows1})
 
 @app.post("/addques",response_class=HTMLResponse)
 async def addquestion(request:Request,questio:str=Form(...),inop1:str=Form(...),inop2:str=Form(...),inop3:str=Form(...),inop4:str=Form(...),cname:str=Form(...),lev:str=Form(...)):
-        query=quests.insert().values(question=questio,incorrect_answer1=inop1,incorrect_answer2=inop2,incorrect_answer3=inop3,correct_answer=inop4,level=lev,category=cname,status=1)
-        rows=await database.execute(query)
-        qa = quests.select().where(quests.c.status == 1)
-        rows2 = await database.fetch_all(qa)
-        qas = quests.select().where(quests.c.status == 0)
-        rows3 = await database.fetch_all(qas)
-        return template.TemplateResponse("qa.html",{"request":request,"rows2":rows2,"rows3":rows3})
-        
+    query=quests.insert().values(question=questio,incorrect_answer1=inop1,incorrect_answer2=inop2,incorrect_answer3=inop3,correct_answer=inop4,level=lev,category=cname,status=1)
+    rows=await database.execute(query)
+    rows2,rows3= await quiz_query()
+    cat= await category_query()
+    return template.TemplateResponse("qa.html",{"request":request,"rows2":rows2,"rows3":rows3,"cat":cat[0]})
+    
 
 @app.get("/category.html",response_class=HTMLResponse)
 async def catpage(request:Request):
-    query = category.select().where(category.c.status == 1)
-    rows = await database.fetch_all(query)
-    query1 = category.select().where(category.c.status == 0)
-    rows1 = await database.fetch_all(query1)
+    rows,rows1 = await category_query()
     return template.TemplateResponse("category.html",{"request":request,"rows":rows,"rows1":rows1})
 
 @app.get("/qa.html",response_class=HTMLResponse)
 async def quepage(request:Request):
-    qa = quests.select().where(quests.c.status == 1)
-    rows2 = await database.fetch_all(qa)
-    qas = quests.select().where(quests.c.status == 0)
-    rows3 = await database.fetch_all(qas)
-    return template.TemplateResponse("qa.html",{"request":request,"rows2":rows2,"rows3":rows3})
+    rows2,rows3= await quiz_query()
+    cat= await category_query()
+    return template.TemplateResponse("qa.html",{"request":request,"rows2":rows2,"rows3":rows3,"cat":cat[0]})
 
 @app.post("/category.html",response_class=HTMLResponse)
 async def upcat(request:Request,catget:str=Form(...),id:int=Form(...)):
-        query = category.select().where(category.c.id == id)
-        check = await database.fetch_one(query)
-        if (check.status == 0):
-            que=category.update().where(category.c.id == id).values(status=1)
-            rec = await database.execute(que)
-        else :    
-            query=category.update().where(category.c.id == id).values(name=catget)
-            record = await database.execute(query)
-        query = category.select().where(category.c.status == 1)
-        rows = await database.fetch_all(query)
-        query1 = category.select().where(category.c.status == 0)
-        rows1 = await database.fetch_all(query1)
-        return template.TemplateResponse("category.html",{"request":request,"rows":rows,"rows1":rows1})
+    query = category.select().where(category.c.id == id)
+    check = await database.fetch_one(query)
+    if (check.status == 0):
+        que=category.update().where(category.c.id == id).values(status=1)
+        rec = await database.execute(que)
+    else :    
+        query=category.update().where(category.c.id == id).values(name=catget)
+        record = await database.execute(query)
+    rows,rows1 = await category_query()
+    return template.TemplateResponse("category.html",{"request":request,"rows":rows,"rows1":rows1})
 
 @app.post("/qa.html",response_class=HTMLResponse)
 async def upqa(request:Request,levelget:str=Form(...),cat:str=Form(...),id:int=Form(...),qget:str=Form(...),ans1:str=Form(...),ans2:str=Form(...),ans3:str=Form(...),ans:str=Form(...)):
-        query = quests.select().where(quests.c.id == id)
-        check = await database.fetch_one(query)
-        if (check.status == 0):
-            que=quests.update().where(quests.c.id == id).values(status=1)
-            rec = await database.execute(que)
-        else :    
-            query=quests.update().where(quests.c.id == id).values(category=cat,level=levelget,question=qget,incorrect_answer1=ans1,incorrect_answer2=ans2,incorrect_answer3=ans3,correct_answer=ans)
-            record = await database.execute(query)
-        query = quests.select().where(quests.c.status == 1)
-        rows2 = await database.fetch_all(query)
-        query1 = quests.select().where(quests.c.status == 0)
-        rows3 = await database.fetch_all(query1)
-        return template.TemplateResponse("qa.html",{"request":request,"rows2":rows2,"rows3":rows3})        
+    query = quests.select().where(quests.c.id == id)
+    check = await database.fetch_one(query)
+    if (check.status == 0):
+        que=quests.update().where(quests.c.id == id).values(status=1)
+        rec = await database.execute(que)
+    else :    
+        query=quests.update().where(quests.c.id == id).values(category=cat,level=levelget,question=qget,incorrect_answer1=ans1,incorrect_answer2=ans2,incorrect_answer3=ans3,correct_answer=ans)
+        record = await database.execute(query)
+    rows2,rows3= await quiz_query()
+    cat= await category_query()
+    return template.TemplateResponse("qa.html",{"request":request,"rows2":rows2,"rows3":rows3,"cat":cat[0]})        
  
-        
 @app.get("/updatecat.html/{id}",response_class=HTMLResponse)
 async def upcatget(request:Request,id:int):
     qa = category.select().where(category.c.id == id)
@@ -249,9 +231,9 @@ async def upcatget(request:Request,id:int):
 
 @app.get("/updateqa.html/{id}",response_class=HTMLResponse)
 async def upqaget(request:Request,id:int):
-        qa = quests.select().where(quests.c.id == id)
-        rowsget = await database.fetch_one(qa)
-        return template.TemplateResponse("updateqa.html",{"request":request,"rowsget":rowsget})    
+    qa = quests.select().where(quests.c.id == id)
+    rowsget = await database.fetch_one(qa)
+    return template.TemplateResponse("updateqa.html",{"request":request,"rowsget":rowsget})    
 
 @app.get("/deletecat.html/{id}",response_class=HTMLResponse)
 async def delcatget(request:Request,id:int):
@@ -267,44 +249,34 @@ async def delqaget(request:Request,id:int):
 
 @app.post("/delete",response_class=HTMLResponse)
 async def deletingcat(request:Request,catget:str=Form(...),id:int=Form(...)):
-            que=category.update().where(category.c.id == id).values(status=0)
-            rec = await database.execute(que)
-            query = category.select().where(category.c.status == 1)
-            rows = await database.fetch_all(query)
-            query1 = category.select().where(category.c.status == 0)
-            rows1 = await database.fetch_all(query1)
-            return template.TemplateResponse("category.html",{"request":request,"rows":rows,"rows1":rows1})
+    que=category.update().where(category.c.id == id).values(status=0)
+    rec = await database.execute(que)
+    rows,rows1 = await category_query()
+    return template.TemplateResponse("category.html",{"request":request,"rows":rows,"rows1":rows1})
 
 @app.post("/deleteqa",response_class=HTMLResponse)
 async def deletingqa(request:Request,id:int=Form(...)):
-            que=quests.update().where(quests.c.id == id).values(status=0)
-            rec = await database.execute(que)
-            query = quests.select().where(quests.c.status == 1)
-            rows2 = await database.fetch_all(query)
-            query1 = quests.select().where(quests.c.status == 0)
-            rows3 = await database.fetch_all(query1)
-            return template.TemplateResponse("qa.html",{"request":request,"rows2":rows2,"rows3":rows3})
+    que=quests.update().where(quests.c.id == id).values(status=0)
+    rec = await database.execute(que)
+    rows2,rows3= await quiz_query()
+    cat= await category_query()
+    return template.TemplateResponse("qa.html",{"request":request,"rows2":rows2,"rows3":rows3,"cat":cat[0]})
 
 
 @app.get("/deletecat/{id}",response_class=HTMLResponse)
 async def deletecat(request:Request,id: int):
     query = category.delete().where(category.c.id == id)
     rol= await database.execute(query)
-    query = category.select().where(category.c.status == 1)
-    rows = await database.fetch_all(query)
-    query1 = category.select().where(category.c.status == 0)
-    rows1 = await database.fetch_all(query1)
+    rows,rows1 = await category_query()
     return template.TemplateResponse("category.html",{"request":request,"rows":rows,"rows1":rows1})
 
 @app.get("/deleteqa/{id}",response_class=HTMLResponse)
 async def deleteqa(request:Request,id: int):
     query = quests.delete().where(quests.c.id == id)
     rol= await database.execute(query)
-    query = quests.select().where(quests.c.status == 1)
-    rows2 = await database.fetch_all(query)
-    query1 = quests.select().where(quests.c.status == 0)
-    rows3 = await database.fetch_all(query1)
-    return template.TemplateResponse("qa.html",{"request":request,"rows2":rows2,"rows3":rows3}) 
+    rows2,rows3= await quiz_query()
+    cat= await category_query()
+    return template.TemplateResponse("qa.html",{"request":request,"rows2":rows2,"rows3":rows3,"cat":cat[0]}) 
 
 @app.post("/score",response_class=HTMLResponse)
 async def scoreout(request:Request,points:int=Form(...),sec:int=Form(...),levels:str=Form(...),cat:str=Form(...),name:str=Form(...)):
@@ -312,9 +284,21 @@ async def scoreout(request:Request,points:int=Form(...),sec:int=Form(...),levels
    record = await database.execute(query)
    query1=Userscore.select()
    rows=await database.fetch_all(query1)
-   return template.TemplateResponse("Scorecard.html",{"request":request,"rows":rows})
+   return template.TemplateResponse("scorecard.html",{"request":request,"rows":rows})
 
+async def quiz_query():
+    query = quests.select().where(quests.c.status == 1)
+    rows2 = await database.fetch_all(query)
+    query1 = quests.select().where(quests.c.status == 0)
+    rows3 = await database.fetch_all(query1)
+    return rows2,rows3
 
+async def category_query():
+    query2 = category.select().where(category.c.status == 1)
+    rows = await database.fetch_all(query2)
+    query1 = category.select().where(category.c.status == 0)
+    rows1 = await database.fetch_all(query1)
+    return rows,rows1 
    
 
 
