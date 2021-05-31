@@ -17,8 +17,13 @@
           <input type="text" placeholder="Enter option 3" name="inop3" id="inop3"required>
           <label for="inop4"><b>Correct Option</b></label>
           <input type="text" placeholder="Enter option 4" name="inop4" id="inop4"required>
-          <label for="catn"><b>Category</b></label>
-          <input type="text" placeholder="Enter Category" name="cname" id="cname"required>
+          <label for="cname"><b>Category</b></label>
+          <select name="cname" id="cname">
+            {% for category in cat %} <option value={{ category.name }}  class="dropbtn">
+                {{ category.name}}
+            </option>
+            {% endfor %}
+        </select>
           <label for="lev"><b>Level</b></label>
           <input type="text" placeholder="Enter level" name="lev" id="lev"required>
           <button type="submit" class="cancelbtn" style="left: 60%;">Ok</button>
